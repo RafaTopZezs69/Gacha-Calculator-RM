@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Juntando Diamantes · Calculadora de Gacha</title>
+<style>
+:root{--bg:#eef2f5;--card:#fff;--line:#cfd8e0;--tx:#111a22;--mut:#5b6b78;--ac:#0b8a96;--ac2:#0b8a96;--in:#f6f9fb;--btn:#0b8a96;--btnx:#fff;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a0c0e;--card:#101417;--line:#1f2a30;--tx:#f1f5f7;--mut:#8a9aa4;--ac:#6fc3cc;--ac2:#7ec8d0;--in:#0b0e10;--btn:#78bfc6;--btnx:#06191b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0a0c0e;--card:#101417;--line:#1f2a30;--tx:#f1f5f7;--mut:#8a9aa4;--ac:#6fc3cc;--ac2:#7ec8d0;--in:#0b0e10;--btn:#78bfc6;--btnx:#06191b;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.35 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1100px;margin:0 auto;padding:14px}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+h1{font-size:22px;margin:0}
+.sub{color:var(--mut);font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+.pills{display:flex;gap:8px;align-items:stretch}
+.pill{border:1px solid var(--line);background:var(--card);padding:6px 12px;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);white-space:nowrap}
+.pill b{color:var(--tx);font-size:14px;margin-left:6px}
+.lang{font:inherit;font-size:11px;letter-spacing:.1em;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
+.lang:hover{border-color:var(--ac)}
+.lang span.on{color:var(--ac);text-decoration:underline;text-underline-offset:3px}
+.status{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);padding:8px 12px;margin:12px 0;font-size:12px;color:var(--mut)}
+.status span:last-child{letter-spacing:.14em;text-transform:uppercase;font-size:10px}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:820px){.cols{grid-template-columns:1fr}}
+section{background:var(--card);border:1px solid var(--line);border-top:2px solid var(--ac);padding:14px;display:flex;flex-direction:column;gap:10px}
+h2{margin:0 0 4px;font-size:14px;display:flex;justify-content:space-between;align-items:center}
+h2 small{color:var(--mut);font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+h2 i{font-style:normal;font-size:10px;border:1px solid var(--line);padding:2px 5px;margin-right:8px;color:var(--mut)}
+.f{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center}
+.f label{font-size:12px;color:var(--tx)}
+input,select{width:100%;background:var(--in);color:var(--tx);border:1px solid var(--line);padding:8px;font:inherit;text-align:center;min-width:0;border-radius:0}
+input:focus,select:focus{outline:1px solid var(--ac);border-color:var(--ac)}
+.q{display:flex;gap:6px;justify-content:flex-end}
+.q button{background:var(--in);color:var(--tx);border:1px solid var(--line);font:inherit;font-size:10px;font-weight:700;padding:4px 8px;cursor:pointer}
+.q button:hover{border-color:var(--ac)}
+.r{display:grid;grid-template-columns:1fr auto;gap:2px 8px;align-items:baseline;padding:2px 0}
+.r span{font-size:12px}.r b{font-size:19px;text-align:right;font-variant-numeric:tabular-nums}
+.r em{font-style:normal;font-size:10px;color:var(--mut);grid-column:2;text-align:right;margin-top:-4px}
+.r.p b{color:var(--ac2)}
+hr{border:0;border-top:1px solid var(--line);margin:4px 0;width:100%}
+.go{margin-top:auto;background:var(--btn);color:var(--btnx);border:0;padding:12px;font:inherit;font-weight:700;letter-spacing:.18em;text-transform:uppercase;cursor:pointer}
+.g{display:grid;grid-template-columns:1.3fr repeat(4,1fr);gap:8px 8px;align-items:baseline;font-size:12.5px}
+.g .h{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;text-align:right}
+.g b{text-align:right;font-variant-numeric:tabular-nums}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px}
+.d{font-size:12px;color:var(--mut)}
+section.oth{margin-top:12px}
+.note{margin:14px 0;padding:8px 12px;border-left:3px solid var(--ac);font-size:12px;font-weight:600}
+</style></head>
+<body><main>
+<header>
+  <div><h1 data-t="title"></h1><div class="sub" data-t="sub"></div></div>
+  <div class="pills">
+    <div class="pill">◆ <span data-t="diamond"></span><b id="hd">0</b></div>
+    <div class="pill">◈ <span data-t="ticket"></span><b id="ht">0</b></div>
+    <button class="pill lang" id="lang" type="button" aria-label="Language / Idioma"><span id="lp">PT</span><span>|</span><span id="le">EN</span></button>
+  </div>
+</header>
+<div class="status"><span id="st"></span><span data-t="tactical"></span></div>
+<div class="cols">
+  <section>
+    <h2><span><i>01</i><span data-t="input"></span></span><small data-t="input"></small></h2>
+    <div class="f"><label for="start" data-t="start"></label><input type="date" id="start"></div>
+    <div class="f"><label for="end" data-t="end"></label><input type="date" id="end"></div>
+    <div class="f"><label for="days" data-t="daysl"></label><input type="number" id="days" min="0" value="0" inputmode="numeric"></div>
+    <div class="q" id="quick"></div>
+    <div class="f"><label for="free" data-t="free"></label><input type="number" id="free" min="0" value="0" inputmode="numeric"></div>
+    <div class="f"><label for="cars" data-t="cars"></label><select id="cars"></select></div>
+    <div class="f"><label for="pity" data-t="pity"></label><select id="pity"></select></div>
+    <div class="f"><label for="dia" data-t="dia"></label><input type="number" id="dia" min="0" value="0" inputmode="numeric"></div>
+    <div class="f"><label for="pulled" data-t="pulled"></label><input type="number" id="pulled" min="0" value="0" inputmode="numeric"></div>
+  </section>
+  <section>
+    <h2><span><i>02</i><span data-t="consts"></span></span><small data-t="constsS"></small></h2>
+    <div id="consts" style="display:contents"></div>
+  </section>
+  <section>
+    <h2><span><i>03</i><span data-t="result"></span></span><small data-t="result"></small></h2>
+    <div id="res" style="display:contents"></div>
+    <button class="go" id="go" data-t="calc"></button>
+  </section>
+</div>
+<section class="oth">
+  <h2><span><i>04</i><span data-t="oth"></span></span><small data-t="othS"></small></h2>
+  <div class="d" data-t="othd"></div>
+  <div class="g" id="odds"></div>
+  <div class="d" id="othn"></div>
+  <div class="d" data-t="evt"></div>
+</section>
+<div class="note" data-t="note"></div>
+<script>
+var $=function(i){return document.getElementById(i)},DAY=864e5,COST=150;
+var num=function(i){return Math.max(0,parseFloat($(i).value)||0)};
+var D={
+en:{title:"Diamond Saving · Gacha Calculator",sub:"Diamond / Gacha Calculator",diamond:"Diamond",ticket:"Ticket",tactical:"Tactical Resource Planner",input:"Input",consts:"Magic Constants",constsS:"Constants",result:"Result",start:"Start date",end:"Final date",daysl:"How long from then (days)",free:"Free pulls left",cars:"Cars to pull",pity:"Pulls to hit pity",dia:"Diamonds left",pulled:"Pulls already done",
+c_card:"Monthly card",c_bonus:"Monthly card start-of-month reward",c_signin:"Check-in",c_daily:"Daily tasks",c_weekly:"Weekly tasks",c_weeklyX:"Extra weekly tasks",c_event:"Average weekly event rewards",
+r_gain:"Total new diamonds",r_conv:"Converted to pulls",r_total:"Diamonds you will have by then",r_need:"Total diamonds needed",r_short:"At least still needed",u_dia:"diamonds",u_pull:"pulls",ready:"Ready",calc:"Calculate ›",note:"Attention!!! This pull calculator rounds down.",days:"days",week:"Week",month:"Month starts",oth:"Other Cars",othS:"Random drops",othd:"Chance of getting a random car instead of the one you want: per pull, expected amount and chance of at least one.",leg:"Legendary",rare:"Rare",common:"Common",perpull:"Per pull",expect:"Expected",atleast:"At least 1",pconsid:"Pulls considered (what you will have by then, capped at the guarantee)",ecuh:"Duplicate → ECU",guar:"Guaranteed rares (1 every 10 pulls)",evt:"Limited-time prizes: each legendary has a 25% chance of also giving an event car (18% for a collector’s edition).",loc:"en-US"},
+pt:{title:"Juntando Diamantes · Calculadora de Gacha",sub:"Calculadora de Diamantes / Gacha",diamond:"Diamante",ticket:"Ticket",tactical:"Planejador Tático de Recursos",input:"Entrada",consts:"Constantes Mágicas",constsS:"Constantes",result:"Resultado",start:"Data inicial",end:"Data final",daysl:"Quanto tempo depois (dias)",free:"Puxadas grátis restantes",cars:"Carros para puxar",pity:"Puxadas até o garantido",dia:"Diamantes restantes",pulled:"Puxadas já feitas",
+c_card:"Cartão mensal",c_bonus:"Recompensa do cartão mensal no início do mês",c_signin:"Check-in",c_daily:"Tarefas diárias",c_weekly:"Tarefas semanais",c_weeklyX:"Tarefas semanais extras",c_event:"Recompensa média semanal de eventos",
+r_gain:"Total de diamantes novos",r_conv:"Convertido em puxadas",r_total:"Diamantes que você terá até lá",r_need:"Total de diamantes necessários",r_short:"Falta no mínimo",u_dia:"diamantes",u_pull:"puxadas",ready:"Pronto",calc:"Calcular ›",note:"Atenção!!! A calculadora de puxadas arredonda para baixo.",days:"dias",week:"Semana",month:"Início de mês",oth:"Outros carros",othS:"Drops aleatórios",othd:"Chance de vir um carro aleatório em vez do que você quer: por puxada, quantidade esperada e chance de pelo menos um.",leg:"Lendários",rare:"Raros",common:"Comuns",perpull:"Por puxada",expect:"Esperado",atleast:"Pelo menos 1",pconsid:"Puxadas consideradas (as que você terá até lá, limitadas ao garantido)",ecuh:"Duplicado → ECU",guar:"Raros garantidos (1 a cada 10 puxadas)",evt:"Prêmios por tempo limitado: cada lendário tem 25% de chance de vir também um carro de evento (18% para edição de colecionador).",loc:"pt-BR"}};
+var L="pt";try{var sv=localStorage.getItem("lang");if(sv==="pt"||sv==="en")L=sv}catch(e){}
+var T=function(k){return D[L][k]};
+var C=[["card",150],["bonus",1500],["signin",20],["daily",270],["weekly",500],["weeklyX",150],["event",100]];
+$("consts").innerHTML=C.map(function(c){return '<div class="f"><label for="'+c[0]+'" data-t="c_'+c[0]+'"></label><input type="number" id="'+c[0]+'" min="0" value="'+c[1]+'" inputmode="numeric"></div>'}).join("");
+for(var i=1;i<=12;i++)$("cars").add(new Option(i,i));
+[90,100,115,160,190].forEach(function(n){$("pity").add(new Option(n,n))});
+var t=new Date(),today=Date.UTC(t.getFullYear(),t.getMonth(),t.getDate());
+var iso=function(m){return new Date(m).toISOString().slice(0,10)};
+var ms=function(s){var p=s.split("-").map(Number);return Date.UTC(p[0],p[1]-1,p[2])};
+$("start").value=$("end").value=iso(today);
+[7,30,90,180,365].forEach(function(n){var b=document.createElement("button");b.textContent="+"+n+"D";b.onclick=function(){$("days").value=n;setEnd();calc()};$("quick").appendChild(b)});
+function setEnd(){var s=$("start").value||iso(today);$("start").value=s;$("end").value=iso(ms(s)+num("days")*DAY)}
+function setDays(){if($("start").value&&$("end").value)$("days").value=Math.max(0,Math.round((ms($("end").value)-ms($("start").value))/DAY))}
+var fmt=function(n){return Math.floor(n).toLocaleString(T("loc"))};
+var p2=function(n){return String(n).padStart(2,"0")};
+function row(l,v,u,c){return '<div class="r '+(c||"")+'"><span>'+l+'</span><b>'+v+'</b><em>'+u+'</em></div>'}
+function needPulls(){var c=Math.floor(num("cars")),P=num("pity"),p=Math.floor(num("pulled")),t=0;for(var i=0;i<c;i++){if(p>=P){t+=1;p-=P}else{t+=P-p;p=0}}return t}
+function calc(){
+  var s=ms($("start").value||iso(today)),e=ms($("end").value||iso(today)),days=Math.max(0,Math.round((e-s)/DAY)),months=0;
+  for(var i=1;i<=days;i++)if(new Date(s+i*DAY).getUTCDate()===1)months++;
+  var weeks=Math.ceil(days/7);
+  var gain=Math.floor(days*(num("card")+num("signin")+num("daily"))+months*num("bonus")+weeks*(num("weekly")+num("weeklyX"))+num("event")*(days+1)/7);
+  var total=num("dia")+gain,np=needPulls(),needDia=np*COST,short=Math.max(0,needDia-total-num("free")*COST);
+  $("hd").textContent=fmt(total);$("ht").textContent=fmt(total/COST);
+  $("st").textContent=iso(s)+" → "+iso(e)+" · "+days+" "+T("days")+" · "+T("week")+" "+p2(weeks)+" · "+T("month")+" "+p2(months);
+  var d=T("u_dia"),p=T("u_pull"),cv=T("r_conv");
+  $("res").innerHTML=row(T("r_gain"),fmt(gain),d)+row(cv,fmt(gain/COST),p,"p")+row(T("r_total"),fmt(total),d)+row(cv,fmt(total/COST),p,"p")+"<hr>"+row(T("r_need"),fmt(needDia),d)+row(T("r_short"),short?fmt(short):T("ready"),short?d:"")+row(cv,fmt(short/COST),p,"p");
+  var n=Math.min(Math.floor(total/COST)+Math.floor(num("free")),np),pc=function(x){return x.toLocaleString(T("loc"),{minimumFractionDigits:1,maximumFractionDigits:1})+"%"},ex=function(x){return x.toLocaleString(T("loc"),{maximumFractionDigits:2})};
+  var O=[["leg",1.25,"#d9a21b",30],["rare",11.11,"#a45bd9",10],["common",87.64,"#8a96a0",5]];
+  $("odds").innerHTML='<span></span><span class="h">'+T("perpull")+'</span><span class="h">'+T("expect")+'</span><span class="h">'+T("atleast")+'</span><span class="h">'+T("ecuh")+'</span>'+O.map(function(o){var q=o[1]/100;return '<span><i class="dot" style="background:'+o[2]+'"></i>'+T(o[0])+'</span><b>'+o[1].toLocaleString(T("loc"),{minimumFractionDigits:2})+'%</b><b>'+ex(n*q)+'</b><b>'+pc(o[0]==="rare"&&n>=10?100:(1-Math.pow(1-q,n))*100)+'</b><b>'+o[3]+'</b>'}).join("");
+  $("othn").textContent=T("pconsid")+": "+fmt(n)+" · "+T("guar")+": "+fmt(n/10);
+}
+function apply(){
+  document.documentElement.lang=L==="pt"?"pt-BR":"en";document.title=T("title");
+  [].forEach.call(document.querySelectorAll("[data-t]"),function(n){n.textContent=T(n.getAttribute("data-t"))});
+  $("lp").className=L==="pt"?"on":"";$("le").className=L==="en"?"on":"";calc();
+}
+$("lang").onclick=function(){L=L==="en"?"pt":"en";try{localStorage.setItem("lang",L)}catch(e){}apply()};
+$("days").addEventListener("input",setEnd);
+$("start").addEventListener("input",setDays);
+$("end").addEventListener("input",setDays);
+document.addEventListener("input",calc);
+$("go").onclick=calc;
+apply();
+</script>
+</main></body></html>
