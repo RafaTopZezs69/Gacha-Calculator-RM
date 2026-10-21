@@ -51,6 +51,14 @@ section.oth{margin-top:12px}
 .dv::after{content:"▾";position:absolute;right:8px;color:var(--mut)}
 .dw input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
 .dw:focus-within .dv{outline:1px solid var(--ac);border-color:var(--ac)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:calc(20px + env(safe-area-inset-top,0px)) 20px calc(20px + env(safe-area-inset-bottom,0px));z-index:50}
+.ov.on{display:flex}
+.md{position:relative;background:var(--card);border:1px solid var(--line);border-top:2px solid var(--ac);max-width:420px;width:100%;padding:30px 22px;text-align:center}
+.md p{margin:0;font-size:20px;font-weight:600;line-height:1.4}
+.md p b{color:var(--ac2);font-size:32px}
+.md small b{color:var(--tx)}
+.md small{display:block;margin-top:14px;color:var(--mut);font-size:12px}
+.md .x{position:absolute;top:4px;right:10px;background:none;border:0;color:var(--mut);font-size:24px;cursor:pointer;line-height:1}
 .note{margin:14px 0;padding:8px 12px;border-left:3px solid var(--ac);font-size:12px;font-weight:600}
 </style></head>
 <body><main>
@@ -74,7 +82,8 @@ section.oth{margin-top:12px}
     <div class="f"><label for="cars" data-t="cars"></label><select id="cars"></select></div>
     <div class="f"><label for="pity" data-t="pity"></label><select id="pity"></select></div>
     <div class="f"><label for="dia" data-t="dia"></label><input type="number" id="dia" min="0" value="0" inputmode="numeric"></div>
-    <div class="f"><label for="pulled" data-t="pulled"></label><input type="number" id="pulled" min="0" value="0" inputmode="numeric"></div>
+    <div class="f"><label for="pulled" id="pl" data-t="pulled"></label><input type="number" id="pulled" min="0" value="0" inputmode="numeric"></div>
+    <div class="f" id="rrow"><label for="rprog" data-t="rprog"></label><input type="number" id="rprog" min="0" value="0" inputmode="numeric"></div>
   </section>
   <section>
     <h2><span><i>02</i><span data-t="consts"></span></span><small data-t="constsS"></small></h2>
@@ -94,22 +103,24 @@ section.oth{margin-top:12px}
   <div class="d" data-t="evt"></div>
 </section>
 <div class="note" data-t="note"></div>
+<div class="ov" id="ov" role="dialog" aria-modal="true"><div class="md"><button class="x" id="mx" type="button" aria-label="Close">×</button><p id="mt"></p><small id="ms"></small></div></div>
 <script>
 var $=function(i){return document.getElementById(i)},DAY=864e5,COST=150;
 var num=function(i){return Math.max(0,parseFloat($(i).value)||0)};
 var D={
-en:{title:"Diamond Saving · Gacha Calculator",sub:"Diamond / Gacha Calculator",diamond:"Diamond",ticket:"Ticket",tactical:"Tactical Resource Planner",input:"Input",consts:"Magic Constants",constsS:"Constants",result:"Result",start:"Start date",end:"Final date",daysl:"How long from then (days)",free:"Free pulls left",cars:"Cars to pull",pity:"Pulls to hit pity",dia:"Diamonds left",pulled:"Pulls already done",
+en:{title:"Diamond Saving · Gacha Calculator",sub:"Diamond / Gacha Calculator",diamond:"Diamond",ticket:"Ticket",tactical:"Tactical Resource Planner",input:"Input",consts:"Magic Constants",constsS:"Constants",result:"Result",start:"Start date",end:"Final date",daysl:"How long from then (days)",free:"Free pulls left",cars:"Cars to pull",pity:"Pulls to hit pity",dia:"Diamonds you have in the game",pulled:"Car guarantee: pulls done",rprog:"Random: pulls done",rguar:"Guaranteed random legendaries (1 every 120 pulls)",
 c_card:"Monthly card",c_bonus:"Monthly card start-of-month reward",c_signin:"Check-in",c_daily:"Daily tasks",c_weekly:"Weekly tasks",c_weeklyX:"Extra weekly tasks",c_event:"Average weekly event rewards",
-r_gain:"Total new diamonds",r_conv:"Converted to pulls",r_total:"Diamonds you will have by then",r_need:"Total diamonds needed",r_short:"At least still needed",u_dia:"diamonds",u_pull:"pulls",ready:"Ready",calc:"Calculate ›",note:"Attention!!! This pull calculator rounds down.",days:"days",week:"Week",month:"Month starts",oth:"Other Cars",othS:"Random drops",othd:"Chance of getting a random car instead of the one you want: per pull, expected amount and chance of at least one.",leg:"Legendary",rare:"Rare",common:"Common",perpull:"Per pull",expect:"Expected",atleast:"At least 1",pconsid:"Pulls considered (what you will have by then, capped at the guarantee)",ecuh:"Duplicate → ECU",guar:"Guaranteed rares (1 every 10 pulls)",evt:"Limited-time prizes: each legendary has a 25% chance of also giving an event car (18% for a collector’s edition).",loc:"en-US"},
-pt:{title:"Juntando Diamantes · Calculadora de Gacha",sub:"Calculadora de Diamantes / Gacha",diamond:"Diamante",ticket:"Ticket",tactical:"Planejador Tático de Recursos",input:"Entrada",consts:"Constantes Mágicas",constsS:"Constantes",result:"Resultado",start:"Data inicial",end:"Data final",daysl:"Quanto tempo depois (dias)",free:"Puxadas grátis restantes",cars:"Carros para puxar",pity:"Puxadas até o garantido",dia:"Diamantes restantes",pulled:"Puxadas já feitas",
+r_gain:"Total new diamonds",r_conv:"Converted to pulls",r_total:"Diamonds you will have by then",r_need:"Total diamonds needed",r_short:"At least still needed",u_dia:"diamonds",u_pull:"pulls",ready:"Ready",r_left:"Diamonds left over",calc:"Calculate ›",note:"Attention!!! This pull calculator rounds down.",days:"days",week:"Week",month:"Month starts",oth:"Other Cars",othS:"Random drops",othd:"Chance of getting a random car instead of the one you want: per pull, expected amount and chance of at least one.",leg:"Legendary",rare:"Rare",common:"Common",perpull:"Per pull",expect:"Expected",atleast:"At least 1",pconsid:"Pulls considered (what you will have by then, capped at the guarantee)",ecuh:"Duplicate → ECU",guar:"Guaranteed rares (1 every 10 pulls)",evt:"Limited-time prizes: each legendary has a 25% chance of also giving an event car (18% for a collector’s edition).",m2a:"but you have a ",m2b:" chance of getting a random one you don’t want",m1a:"You have a ",m1b:" chance of getting the car you want",m2:"but you may get a random one you don’t want",normal:"Red (Normal)",m3a:"You have ",m3b:" guaranteed car(s) in this gacha",m4:"but it is random: it may be the one you want or one you don’t want",pulledN:"Pulls done",loc:"en-US"},
+pt:{title:"Juntando Diamantes · Calculadora de Gacha",sub:"Calculadora de Diamantes / Gacha",diamond:"Diamante",ticket:"Ticket",tactical:"Planejador Tático de Recursos",input:"Entrada",consts:"Constantes Mágicas",constsS:"Constantes",result:"Resultado",start:"Data inicial",end:"Data final",daysl:"Quanto tempo depois (dias)",free:"Giros grátis restantes",cars:"Carros que você quer",pity:"Giros até o garantido",dia:"Diamantes que você tem no jogo",pulled:"Garantido do carro: giros feitos",rprog:"Aleatório: giros feitos",rguar:"Lendários aleatórios garantidos (1 a cada 120 giros)",
 c_card:"Cartão mensal",c_bonus:"Recompensa do cartão mensal no início do mês",c_signin:"Check-in",c_daily:"Tarefas diárias",c_weekly:"Tarefas semanais",c_weeklyX:"Tarefas semanais extras",c_event:"Recompensa média semanal de eventos",
-r_gain:"Total de diamantes novos",r_conv:"Convertido em puxadas",r_total:"Diamantes que você terá até lá",r_need:"Total de diamantes necessários",r_short:"Falta no mínimo",u_dia:"diamantes",u_pull:"puxadas",ready:"Pronto",calc:"Calcular ›",note:"Atenção!!! A calculadora de puxadas arredonda para baixo.",days:"dias",week:"Semana",month:"Início de mês",oth:"Outros carros",othS:"Drops aleatórios",othd:"Chance de vir um carro aleatório em vez do que você quer: por puxada, quantidade esperada e chance de pelo menos um.",leg:"Lendários",rare:"Raros",common:"Comuns",perpull:"Por puxada",expect:"Esperado",atleast:"Pelo menos 1",pconsid:"Puxadas consideradas (as que você terá até lá, limitadas ao garantido)",ecuh:"Duplicado → ECU",guar:"Raros garantidos (1 a cada 10 puxadas)",evt:"Prêmios por tempo limitado: cada lendário tem 25% de chance de vir também um carro de evento (18% para edição de colecionador).",loc:"pt-BR"}};
+r_gain:"Total de diamantes novos",r_conv:"Convertido em giros",r_total:"Diamantes que você terá até lá",r_need:"Total de diamantes necessários",r_short:"Falta no mínimo",u_dia:"diamantes",u_pull:"giros",ready:"Pronto",r_left:"Diamantes restantes (o que sobra)",calc:"Calcular ›",note:"Atenção!!! A calculadora de giros arredonda para baixo.",days:"dias",week:"Semana",month:"Início de mês",oth:"Outros carros",othS:"Drops aleatórios",othd:"Chance de vir um carro aleatório em vez do que você quer: por giro, quantidade esperada e chance de pelo menos um.",leg:"Lendários",rare:"Raros",common:"Comuns",perpull:"Por giro",expect:"Esperado",atleast:"Pelo menos 1",pconsid:"Giros considerados (os que você terá até lá, limitados ao garantido)",ecuh:"Duplicado → ECU",guar:"Raros garantidos (1 a cada 10 giros)",evt:"Prêmios por tempo limitado: cada lendário tem 25% de chance de vir também um carro de evento (18% para edição de colecionador).",m2a:"mas você tem ",m2b:" de chance de ganhar um aleatório que você não quer",m1a:"Você tem ",m1b:" de chance de conseguir o carro que você quer",m2:"mas pode ganhar um aleatório que você não quer",normal:"Vermelho (Normal)",m3a:"Você tem ",m3b:" carro(s) garantido(s) neste gacha",m4:"mas ele é aleatório: pode ser o que você quer ou um que você não quer",pulledN:"Giros feitos",loc:"pt-BR"}};
 var L="pt";try{var sv=localStorage.getItem("lang");if(sv==="pt"||sv==="en")L=sv}catch(e){}
 var T=function(k){return D[L][k]};
 var C=[["card",150],["bonus",1500],["signin",20],["daily",270],["weekly",500],["weeklyX",150],["event",100]];
 $("consts").innerHTML=C.map(function(c){return '<div class="f"><label for="'+c[0]+'" data-t="c_'+c[0]+'"></label><input type="number" id="'+c[0]+'" min="0" value="'+c[1]+'" inputmode="numeric"></div>'}).join("");
 for(var i=1;i<=12;i++)$("cars").add(new Option(i,i));
-[90,100,115,160,190].forEach(function(n){$("pity").add(new Option(n,n))});
+var G=[["Crystal · Prime Legend","Cristal · Prime Legend",[["Standard",90],["Sport",115],["Extreme",160]]],["Crystal · Legend","Cristal · Legend",[["Standard",150],["Sport",190],["Extreme",240]]],["Purple (common ability)","Roxo (habilidade comum)",[["Standard",90],["Sport",115],["Extreme",160]]]];
+function buildPity(){var s=$("pity"),i=s.selectedIndex>=0?s.selectedIndex:0;s.innerHTML="";G.forEach(function(g){var og=document.createElement("optgroup");og.label=L==="pt"?g[1]:g[0];g[2].forEach(function(o){var op=new Option(o[0]+" · "+o[1],o[1]);if(g[3])op.dataset.n="1";og.appendChild(op)});s.appendChild(og)});var n=new Option(T("normal")+" · 100",100);n.dataset.n="1";s.appendChild(n);s.selectedIndex=i}
 var t=new Date(),today=Date.UTC(t.getFullYear(),t.getMonth(),t.getDate());
 var iso=function(m){return new Date(m).toISOString().slice(0,10)};
 var ms=function(s){var p=s.split("-").map(Number);return Date.UTC(p[0],p[1]-1,p[2])};
@@ -121,6 +132,10 @@ var fmt=function(n){return Math.floor(n).toLocaleString(T("loc"))};
 var p2=function(n){return String(n).padStart(2,"0")};
 var fd=function(s){var a=(s||"").split("-");if(a.length!==3)return "";return L==="pt"?a[2]+"/"+a[1]+"/"+a[0]:a[1]+"/"+a[2]+"/"+a[0]};
 function row(l,v,u,c){return '<div class="r '+(c||"")+'"><span>'+l+'</span><b>'+v+'</b><em>'+u+'</em></div>'}
+function randG(n){var r=Math.floor(num("rprog")),g=0,t=0;while(g<1000){var need=r>=120?1:120-r;if(t+need>n)break;t+=need;g++;r=r>=120?r-120:0}return g}
+var LAST=100,TOT=0;
+var isN=function(){var o=$("pity").selectedOptions[0];return !!o&&o.dataset.n==="1"};
+function guar(n,size,r){var g=0,t=0;while(g<1000){var need=r>=size?1:size-r;if(t+need>n)break;t+=need;g++;r=r>=size?r-size:0}return g}
 function needPulls(){var c=Math.floor(num("cars")),P=num("pity"),p=Math.floor(num("pulled")),t=0;for(var i=0;i<c;i++){if(p>=P){t+=1;p-=P}else{t+=P-p;p=0}}return t}
 function calc(){
   var s=ms($("start").value||iso(today)),e=ms($("end").value||iso(today)),days=Math.max(0,Math.round((e-s)/DAY)),months=0;
@@ -128,19 +143,19 @@ function calc(){
   var weeks=Math.ceil(days/7);
   var gain=Math.floor(days*(num("card")+num("signin")+num("daily"))+months*num("bonus")+weeks*(num("weekly")+num("weeklyX"))+num("event")*(days+1)/7);
   var total=num("dia")+gain,np=needPulls(),needDia=np*COST,short=Math.max(0,needDia-total-num("free")*COST);
-  $("startv").textContent=fd($("start").value);$("endv").textContent=fd($("end").value);$("hd").textContent=fmt(total);$("ht").textContent=fmt(total/COST);
+  $("rrow").style.display=isN()?"none":"";$("pl").textContent=T(isN()?"pulledN":"pulled");TOT=total;LAST=np>0?Math.min(100,Math.floor((Math.floor(total/COST)+Math.floor(num("free")))/np*100)):100;$("startv").textContent=fd($("start").value);$("endv").textContent=fd($("end").value);$("hd").textContent=fmt(total);$("ht").textContent=fmt(total/COST);
   $("st").textContent=fd(iso(s))+" → "+fd(iso(e))+" · "+days+" "+T("days")+" · "+T("week")+" "+p2(weeks)+" · "+T("month")+" "+p2(months);
   var d=T("u_dia"),p=T("u_pull"),cv=T("r_conv");
-  $("res").innerHTML=row(T("r_gain"),fmt(gain),d)+row(cv,fmt(gain/COST),p,"p")+row(T("r_total"),fmt(total),d)+row(cv,fmt(total/COST),p,"p")+"<hr>"+row(T("r_need"),fmt(needDia),d)+row(T("r_short"),short?fmt(short):T("ready"),short?d:"")+row(cv,fmt(short/COST),p,"p");
-  var n=Math.min(Math.floor(total/COST)+Math.floor(num("free")),np),pc=function(x){return x.toLocaleString(T("loc"),{minimumFractionDigits:1,maximumFractionDigits:1})+"%"},ex=function(x){return x.toLocaleString(T("loc"),{maximumFractionDigits:2})};
+  $("res").innerHTML=row(T("r_gain"),fmt(gain),d)+row(cv,fmt(gain/COST),p,"p")+row(T("r_total"),fmt(total),d)+row(cv,fmt(total/COST),p,"p")+"<hr>"+row(T("r_need"),fmt(needDia),d)+row(T("r_short"),short?fmt(short):T("ready"),short?d:"")+row(cv,fmt(short/COST),p,"p")+"<hr>"+row(T("r_left"),fmt(Math.max(0,total+num("free")*COST-needDia)),d)+row(cv,fmt(Math.max(0,total+num("free")*COST-needDia)/COST),p,"p");
+  var n=Math.min(Math.floor(total/COST)+Math.floor(num("free")),np),g=isN()?0:randG(n),pc=function(x){return x.toLocaleString(T("loc"),{minimumFractionDigits:1,maximumFractionDigits:1})+"%"},ex=function(x){return x.toLocaleString(T("loc"),{maximumFractionDigits:2})};
   var O=[["leg",1.25,"#d9a21b",30],["rare",11.11,"#a45bd9",10],["common",87.64,"#8a96a0",5]];
-  $("odds").innerHTML='<span></span><span class="h">'+T("perpull")+'</span><span class="h">'+T("expect")+'</span><span class="h">'+T("atleast")+'</span><span class="h">'+T("ecuh")+'</span>'+O.map(function(o){var q=o[1]/100;return '<span><i class="dot" style="background:'+o[2]+'"></i>'+T(o[0])+'</span><b>'+o[1].toLocaleString(T("loc"),{minimumFractionDigits:2})+'%</b><b>'+ex(n*q)+'</b><b>'+pc(o[0]==="rare"&&n>=10?100:(1-Math.pow(1-q,n))*100)+'</b><b>'+o[3]+'</b>'}).join("");
-  $("othn").textContent=T("pconsid")+": "+fmt(n)+" · "+T("guar")+": "+fmt(n/10);
+  $("odds").innerHTML='<span></span><span class="h">'+T("perpull")+'</span><span class="h">'+T("expect")+'</span><span class="h">'+T("atleast")+'</span><span class="h">'+T("ecuh")+'</span>'+O.map(function(o){var q=o[1]/100;return '<span><i class="dot" style="background:'+o[2]+'"></i>'+T(o[0])+'</span><b>'+o[1].toLocaleString(T("loc"),{minimumFractionDigits:2})+'%</b><b>'+ex(o[0]==="leg"?Math.max(n*q,g):n*q)+'</b><b>'+pc((o[0]==="rare"&&n>=10)||(o[0]==="leg"&&g>=1)?100:(1-Math.pow(1-q,n))*100)+'</b><b>'+o[3]+'</b>'}).join("");
+  $("othn").textContent=T("pconsid")+": "+fmt(n)+" · "+T("guar")+": "+fmt(n/10)+(isN()?"":" · "+T("rguar")+": "+g);
 }
 function apply(){
   document.documentElement.lang=L==="pt"?"pt-BR":"en";document.title=T("title");
   [].forEach.call(document.querySelectorAll("[data-t]"),function(n){n.textContent=T(n.getAttribute("data-t"))});
-  $("lp").className=L==="pt"?"on":"";$("le").className=L==="en"?"on":"";calc();
+  $("lp").className=L==="pt"?"on":"";$("le").className=L==="en"?"on":"";buildPity();calc();
 }
 $("lang").onclick=function(){L=L==="en"?"pt":"en";try{localStorage.setItem("lang",L)}catch(e){}apply()};
 ["start","end"].forEach(function(id){$(id).addEventListener("click",function(){try{this.showPicker()}catch(e){}})});
@@ -148,7 +163,14 @@ $("days").addEventListener("input",setEnd);
 $("start").addEventListener("input",setDays);
 $("end").addEventListener("input",setDays);
 document.addEventListener("input",calc);
-$("go").onclick=calc;
+function showM(){calc();var nm=isN(),sm=$("ms"),f=function(x){return x.toLocaleString(T("loc"),{minimumFractionDigits:1,maximumFractionDigits:1})};
+  if(nm){var av=Math.floor(TOT/COST)+Math.floor(num("free")),k=guar(av,100,Math.floor(num("pulled"))),r=0.0125/17,pn=Math.pow(1-r,av)*Math.pow(16/17,k),pp=Math.floor((1-pn)*1000)/10,un=Math.round((100-pp)*10)/10;
+    $("mt").innerHTML=T("m1a")+'<b>'+f(pp)+'%</b>'+T("m1b");sm.innerHTML=T("m2a")+'<b>'+f(un)+'%</b>'+T("m2b");sm.style.display="block"}
+  else{$("mt").innerHTML=T("m1a")+'<b>'+LAST.toLocaleString(T("loc"))+'%</b>'+T("m1b");sm.textContent="";sm.style.display="none"}
+  $("ov").className="ov on"}
+$("go").onclick=showM;
+$("ov").addEventListener("click",function(e){if(e.target===this||e.target.id==="mx")this.className="ov"});
+document.addEventListener("keydown",function(e){if(e.key==="Escape")$("ov").className="ov"});
 apply();
 </script>
 </main></body></html>
