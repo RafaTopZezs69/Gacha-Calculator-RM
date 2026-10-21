@@ -46,6 +46,11 @@ hr{border:0;border-top:1px solid var(--line);margin:4px 0;width:100%}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px}
 .d{font-size:12px;color:var(--mut)}
 section.oth{margin-top:12px}
+.dw{position:relative}
+.dv{display:block;position:relative;background:var(--in);color:var(--tx);border:1px solid var(--line);padding:8px;text-align:center}
+.dv::after{content:"▾";position:absolute;right:8px;color:var(--mut)}
+.dw input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.dw:focus-within .dv{outline:1px solid var(--ac);border-color:var(--ac)}
 .note{margin:14px 0;padding:8px 12px;border-left:3px solid var(--ac);font-size:12px;font-weight:600}
 </style></head>
 <body><main>
@@ -61,8 +66,8 @@ section.oth{margin-top:12px}
 <div class="cols">
   <section>
     <h2><span><i>01</i><span data-t="input"></span></span><small data-t="input"></small></h2>
-    <div class="f"><label for="start" data-t="start"></label><input type="date" id="start"></div>
-    <div class="f"><label for="end" data-t="end"></label><input type="date" id="end"></div>
+    <div class="f"><label for="start" data-t="start"></label><div class="dw"><span class="dv" id="startv"></span><input type="date" id="start"></div></div>
+    <div class="f"><label for="end" data-t="end"></label><div class="dw"><span class="dv" id="endv"></span><input type="date" id="end"></div></div>
     <div class="f"><label for="days" data-t="daysl"></label><input type="number" id="days" min="0" value="0" inputmode="numeric"></div>
     <div class="q" id="quick"></div>
     <div class="f"><label for="free" data-t="free"></label><input type="number" id="free" min="0" value="0" inputmode="numeric"></div>
@@ -114,6 +119,7 @@ function setEnd(){var s=$("start").value||iso(today);$("start").value=s;$("end")
 function setDays(){if($("start").value&&$("end").value)$("days").value=Math.max(0,Math.round((ms($("end").value)-ms($("start").value))/DAY))}
 var fmt=function(n){return Math.floor(n).toLocaleString(T("loc"))};
 var p2=function(n){return String(n).padStart(2,"0")};
+var fd=function(s){var a=(s||"").split("-");if(a.length!==3)return "";return L==="pt"?a[2]+"/"+a[1]+"/"+a[0]:a[1]+"/"+a[2]+"/"+a[0]};
 function row(l,v,u,c){return '<div class="r '+(c||"")+'"><span>'+l+'</span><b>'+v+'</b><em>'+u+'</em></div>'}
 function needPulls(){var c=Math.floor(num("cars")),P=num("pity"),p=Math.floor(num("pulled")),t=0;for(var i=0;i<c;i++){if(p>=P){t+=1;p-=P}else{t+=P-p;p=0}}return t}
 function calc(){
@@ -122,8 +128,8 @@ function calc(){
   var weeks=Math.ceil(days/7);
   var gain=Math.floor(days*(num("card")+num("signin")+num("daily"))+months*num("bonus")+weeks*(num("weekly")+num("weeklyX"))+num("event")*(days+1)/7);
   var total=num("dia")+gain,np=needPulls(),needDia=np*COST,short=Math.max(0,needDia-total-num("free")*COST);
-  $("hd").textContent=fmt(total);$("ht").textContent=fmt(total/COST);
-  $("st").textContent=iso(s)+" → "+iso(e)+" · "+days+" "+T("days")+" · "+T("week")+" "+p2(weeks)+" · "+T("month")+" "+p2(months);
+  $("startv").textContent=fd($("start").value);$("endv").textContent=fd($("end").value);$("hd").textContent=fmt(total);$("ht").textContent=fmt(total/COST);
+  $("st").textContent=fd(iso(s))+" → "+fd(iso(e))+" · "+days+" "+T("days")+" · "+T("week")+" "+p2(weeks)+" · "+T("month")+" "+p2(months);
   var d=T("u_dia"),p=T("u_pull"),cv=T("r_conv");
   $("res").innerHTML=row(T("r_gain"),fmt(gain),d)+row(cv,fmt(gain/COST),p,"p")+row(T("r_total"),fmt(total),d)+row(cv,fmt(total/COST),p,"p")+"<hr>"+row(T("r_need"),fmt(needDia),d)+row(T("r_short"),short?fmt(short):T("ready"),short?d:"")+row(cv,fmt(short/COST),p,"p");
   var n=Math.min(Math.floor(total/COST)+Math.floor(num("free")),np),pc=function(x){return x.toLocaleString(T("loc"),{minimumFractionDigits:1,maximumFractionDigits:1})+"%"},ex=function(x){return x.toLocaleString(T("loc"),{maximumFractionDigits:2})};
@@ -137,6 +143,7 @@ function apply(){
   $("lp").className=L==="pt"?"on":"";$("le").className=L==="en"?"on":"";calc();
 }
 $("lang").onclick=function(){L=L==="en"?"pt":"en";try{localStorage.setItem("lang",L)}catch(e){}apply()};
+["start","end"].forEach(function(id){$(id).addEventListener("click",function(){try{this.showPicker()}catch(e){}})});
 $("days").addEventListener("input",setEnd);
 $("start").addEventListener("input",setDays);
 $("end").addEventListener("input",setDays);
