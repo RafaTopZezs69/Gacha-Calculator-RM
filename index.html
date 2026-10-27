@@ -205,7 +205,7 @@ function showM(){calc();var nm=isN(),sm=$("ms"),f=function(x){return x.toLocaleS
 $("go").onclick=showM;
 $("ov").addEventListener("click",function(e){if(e.target===this||e.target.id==="mx")this.className="ov"});
 document.addEventListener("keydown",function(e){if(e.key==="Escape")$("ov").className="ov"});
-var AUD=["Racing_Master_OST_-_RM_Auto_Expo_-_Cptben.mp3","Racing_Master_OST_-_RM_Auto_Expo__Alternative__-_Cptben.mp3"],ai=0,want=true,soundOn=false,waiting=false;
+var AUD=["Racing Master OST - RM Auto Expo - Cptben.mp3","Racing Master OST - RM Auto Expo (Alternative) - Cptben.mp3"],ai=0,want=true,soundOn=false,waiting=false;
 try{if(localStorage.getItem("mute")==="1")want=false}catch(e){}
 var au=new Audio(AUD[0]);au.loop=true;au.preload="auto";au.volume=.6;
 au.onerror=function(){if(ai<AUD.length-1){ai++;au.src=AUD[ai];au.load();au.play().catch(function(){})}else{$("mu").style.display="none"}};
