@@ -2,8 +2,8 @@
 A website that helps you figure out how many Diamonds and Tickets you need to get the car you want.
 https://rafatopzezs69.github.io/Gacha-Calculator-RM/
 
-<img width="1084" height="891" alt="Captura de tela 2026-10-25 212249" src="https://github.com/user-attachments/assets/92d53ca2-ecb2-46c9-834b-307a26211a9d" />
-<img width="1077" height="512" alt="Captura de tela 2026-10-25 212309" src="https://github.com/user-attachments/assets/daa9cc26-04a3-4bae-b493-b96512d2ddf1" />
+<img width="1083" height="894" alt="Captura de tela 2026-10-29 183655" src="https://github.com/user-attachments/assets/dfb9fa19-0461-4327-ac01-24c207c82e81" />
+<img width="1078" height="284" alt="Captura de tela 2026-10-29 183707" src="https://github.com/user-attachments/assets/789daf80-c75b-42b8-a482-aadf19ee16e7" />
 
 Credit to this guy who made the original
 
